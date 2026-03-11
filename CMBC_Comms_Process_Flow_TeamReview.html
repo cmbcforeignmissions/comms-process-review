@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMBC Communications Request Flow — Team Review</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display:ital@0;1&display=swap');
+
+  :root {
+    --navy:   #1F3864;
+    --blue:   #2E75B6;
+    --sky:    #D6E4F0;
+    --gold:   #C9A227;
+    --gold-lt:#FFF8E1;
+    --green:  #2E7D52;
+    --green-lt:#E8F5EE;
+    --orange: #E07B3A;
+    --orange-lt:#FEF0E6;
+    --gray:   #595959;
+    --light:  #F4F7FB;
+    --white:  #FFFFFF;
+    --text:   #2A2A2A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .page {
+    width: 850px;
+    margin: 0 auto;
+    padding: 36px 44px 40px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 14px;
+    margin-bottom: 22px;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    line-height: 1.2;
+  }
+  .header-left p {
+    font-size: 11.5px;
+    color: var(--gray);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+  .header-badge {
+    background: var(--gold);
+    color: var(--white);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+
+  /* ── INTRO CALLOUT ── */
+  .intro {
+    background: var(--sky);
+    border-left: 4px solid var(--blue);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    margin-bottom: 22px;
+    font-size: 12.5px;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+  .intro strong { font-weight: 600; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--blue);
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--sky);
+  }
+
+  /* ── FLOW GRID ── */
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .step {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #DDE6F0;
+    display: flex;
+    flex-direction: column;
+  }
+  .step-head {
+    background: var(--navy);
+    padding: 8px 10px 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-num {
+    background: var(--gold);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-title {
+    color: var(--white);
+    font-size: 11.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .step-body {
+    background: var(--light);
+    padding: 9px 10px;
+    flex: 1;
+  }
+  .step-owner {
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    margin-bottom: 5px;
+  }
+  .step-desc {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+
+  /* Arrow between steps */
+  .arrow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .arrow {
+    color: var(--blue);
+    font-size: 18px;
+    opacity: 0.5;
+  }
+
+  /* ── CONNECTOR LABEL ── */
+  .connector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px 0 14px;
+    font-size: 10.5px;
+    color: var(--gray);
+    font-style: italic;
+  }
+  .connector::before, .connector::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #DDE6F0;
+  }
+
+  /* ── TWO COLUMN LAYOUT ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+
+  /* ── BRANCH BOX ── */
+  .branch {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #DDE6F0;
+  }
+  .branch-head {
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .branch-head .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .branch-body {
+    padding: 10px 12px;
+    background: var(--white);
+  }
+  .branch-step {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 7px;
+    align-items: flex-start;
+  }
+  .branch-step:last-child { margin-bottom: 0; }
+  .bs-num {
+    background: var(--navy);
+    color: var(--white);
+    font-size: 9px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .bs-text {
+    font-size: 11px;
+    color: var(--gray);
+    line-height: 1.45;
+  }
+  .bs-text strong {
+    color: var(--text);
+    font-weight: 600;
+    display: block;
+    font-size: 11px;
+  }
+
+  /* ── DEADLINE BOX ── */
+  .deadline-box {
+    background: var(--gold-lt);
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 22px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .deadline-icon {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .deadline-content h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .deadline-content p {
+    font-size: 11.5px;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+  .deadline-content p strong { color: var(--text); }
+
+  /* ── DELIVERY ROW ── */
+  .delivery-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .delivery-chip {
+    background: var(--navy);
+    border-radius: 8px;
+    padding: 8px 6px;
+    text-align: center;
+  }
+  .delivery-chip .icon { font-size: 16px; margin-bottom: 3px; }
+  .delivery-chip .label {
+    font-size: 9.5px;
+    color: var(--white);
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  /* ── FEEDBACK BOX ── */
+  .feedback-box {
+    background: var(--green-lt);
+    border: 1.5px solid var(--green);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+  }
+  .feedback-box h3 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 20px;
+  }
+  .feedback-item {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    font-size: 11.5px;
+    color: var(--gray);
+    line-height: 1.45;
+  }
+  .feedback-item::before {
+    content: '→';
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid #DDE6F0;
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    color: #999;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: white; }
+    .page { padding: 20px 30px; }
+    @page { size: letter; margin: 0.4in; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Communications & Design Request Flow</h1>
+      <p>Community Missionary Baptist Church &nbsp;•&nbsp; DeSoto & Cedar Hill, TX &nbsp;•&nbsp; Proposed Process — March 2026</p>
+    </div>
+    <div class="header-badge">Draft for Team Review</div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <strong>Why this document exists:</strong> This is a proposed update to how we handle design and communications requests at CMBC — not a final decision. You are receiving this because you are part of the process every week. Your feedback matters before anything is built or changed. Please read through, note anything that feels off, and reply with your honest thoughts.
+  </div>
+
+  <!-- SECTION: STANDARD FLOW -->
+  <div class="section-label">Standard Design Request Flow — No Payment Involved</div>
+
+  <div class="flow-grid">
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">1</div>
+        <div class="step-title">Ministry Submits Request</div>
+      </div>
+      <div class="step-body">
+        <div class="step-owner">Ministry Assistant or Liaison</div>
+        <div class="step-desc">Submits request in ClickUp: ministry name, graphic type, placement (Sunday slide, social, email, print), event date, copy, and whether registration is needed.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">2</div>
+        <div class="step-title">Routes to Designer</div>
+      </div>
+      <div class="step-body">
+        <div class="step-owner">Automatic — ClickUp</div>
+        <div class="step-desc">Request auto-assigns to the designer. Communications Director is notified and can take the work directly if available. No email chain needed.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">3</div>
+        <div class="step-title">Designer Uploads Draft</div>
+      </div>
+      <div class="step-body">
+        <div class="step-owner">Designer / Comms Director</div>
+        <div class="step-desc">Draft graphic uploaded directly into the task. Ministry assistant and leader are notified automatically that a draft is ready for review.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">4</div>
+        <div class="step-title">Ministry Reviews On the Graphic</div>
+      </div>
+      <div class="step-body">
+        <div class="step-owner">Ministry Assistant &amp; / or Leader</div>
+        <div class="step-desc">Reviewer clicks directly on the image to pin comments at the exact spot. No more describing changes in text. Approve as-is or request edits.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector">If edits requested → returns to designer automatically &nbsp;|&nbsp; If approved → routes to Communications Director</div>
+
+  <div class="flow-grid" style="grid-template-columns: repeat(2,1fr); max-width:430px;">
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">5</div>
+        <div class="step-title">Comms Director Final Check</div>
+      </div>
+      <div class="step-body">
+        <div class="step-owner">Communications Director</div>
+        <div class="step-desc">Brand standards, correct file size for format, and placement/run schedule confirmed. If it passes, it moves to media. If not, it goes back to the designer — not back to the ministry.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head">
+        <div class="step-num">6</div>
+        <div class="step-title">Media Team Receives Final File</div>
+      </div>
+      <div class="step-body">
+        <div class="step-owner">Media Team</div>
+        <div class="step-desc">Media team receives only fully approved, correctly sized, brand-checked files. Their job here is upload and production — not review or approval.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEADLINE -->
+  <div class="deadline-box">
+    <div class="deadline-icon">⏰</div>
+    <div class="deadline-content">
+      <h3>The Only Hard Deadline: Thursday at Noon</h3>
+      <p>This is an <strong>approval deadline</strong>, not a submission deadline. Requests can come in any day. What matters is that the graphic is <strong>fully approved and in the media team's hands by Thursday at Noon</strong> to run on Sunday. If it misses that window, it holds until the following Sunday — no exceptions. This protects the media team and puts accountability where it belongs: with the submitter.</p>
+    </div>
+  </div>
+
+  <!-- TWO COLUMN: PAID EVENT + DELIVERY -->
+  <div class="section-label">Paid Ministry Event Registration — Parallel Track</div>
+
+  <div class="two-col" style="margin-bottom:22px;">
+    <div class="branch">
+      <div class="branch-head" style="background:var(--orange-lt); color:var(--navy);">
+        <div class="dot" style="background:var(--orange);"></div>
+        When Registration or Payment Is Needed
+      </div>
+      <div class="branch-body">
+        <div class="branch-step">
+          <div class="bs-num">1</div>
+          <div class="bs-text"><strong>Ministry flags at intake</strong>Checks "Registration/Payment Required" in the request form. Fills in: category names, prices, open/close dates. That's it — no form building.</div>
+        </div>
+        <div class="branch-step">
+          <div class="bs-num">2</div>
+          <div class="bs-text"><strong>Comms team configures JotForm</strong>Opens the pre-built template, updates category labels + prices + event name only. Everything else is locked. Takes ~3 minutes.</div>
+        </div>
+        <div class="branch-step">
+          <div class="bs-num">3</div>
+          <div class="bs-text"><strong>Business Manager approves</strong>Receives a notification with a preview of the form. Confirms pricing and activates payment. One click. No building required.</div>
+        </div>
+        <div class="branch-step">
+          <div class="bs-num">4</div>
+          <div class="bs-text"><strong>QR code auto-generated</strong>The moment the form is activated, JotForm creates the QR code automatically. Delivered to Comms team for embed into the final flier.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="branch">
+      <div class="branch-head" style="background:var(--sky); color:var(--navy);">
+        <div class="dot" style="background:var(--blue);"></div>
+        Registration Form Structure
+      </div>
+      <div class="branch-body">
+        <div class="branch-step">
+          <div class="bs-num">•</div>
+          <div class="bs-text"><strong>Category-based pricing</strong>Example: Adults $25 / Teens $10 / Children Free. Registrant selects quantity per category — total calculates automatically.</div>
+        </div>
+        <div class="branch-step">
+          <div class="bs-num">•</div>
+          <div class="bs-text"><strong>Up to 4 registrants per submission</strong>Fields for Registrant 1–4 appear progressively. No blank rows shown until needed.</div>
+        </div>
+        <div class="branch-step">
+          <div class="bs-num">•</div>
+          <div class="bs-text"><strong>Groups larger than 4</strong>"Registering more than 4 people? Describe your group below — a ministry rep will follow up."</div>
+        </div>
+        <div class="branch-step">
+          <div class="bs-num">•</div>
+          <div class="bs-text"><strong>Real-time tracking</strong>Ministry leader and Business Manager can see registrations as they come in — no manual counting.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELIVERY ROW -->
+  <div class="section-label">Where the Final Graphic Goes — Full Distribution Chain</div>
+  <div class="delivery-row">
+    <div class="delivery-chip">
+      <div class="icon">📺</div>
+      <div class="label">ProPresenter Sunday Announcement Reel</div>
+    </div>
+    <div class="delivery-chip">
+      <div class="icon">📡</div>
+      <div class="label">Boxcast → YouTube, Facebook & Website Live</div>
+    </div>
+    <div class="delivery-chip">
+      <div class="icon">📱</div>
+      <div class="label">Social Media Facebook, Instagram, YouTube</div>
+    </div>
+    <div class="delivery-chip">
+      <div class="icon">✉️</div>
+      <div class="label">MailChimp Email Blast</div>
+    </div>
+    <div class="delivery-chip">
+      <div class="icon">💬</div>
+      <div class="label">Clearstream Text Blast</div>
+    </div>
+    <div class="delivery-chip">
+      <div class="icon">🖨️</div>
+      <div class="label">Print Distribution (if applicable)</div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="feedback-box">
+    <h3>✏️ &nbsp;Your Feedback Is the Point — Please Reply with Your Honest Thoughts</h3>
+    <div class="feedback-grid">
+      <div class="feedback-item">Does the request submission step make sense for how you currently work?</div>
+      <div class="feedback-item">Is there anything in the current process that this flow doesn't account for?</div>
+      <div class="feedback-item">Does the Thursday Noon approval deadline feel realistic given your workload?</div>
+      <div class="feedback-item">For the Business Manager: does the new approval-only role for paid events work for you from an accounting standpoint?</div>
+      <div class="feedback-item">What would make this easier for you personally to work within?</div>
+      <div class="feedback-item">Anything you'd add, remove, or change before this gets tested?</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span>Community Missionary Baptist Church &nbsp;•&nbsp; Communications & Marketing Director &nbsp;•&nbsp; Internal Draft — Not for Distribution</span>
+    <span>Reply deadline: [INSERT DATE]</span>
+  </div>
+
+</div>
+</body>
+</html>
